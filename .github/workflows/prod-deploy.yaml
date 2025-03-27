@@ -32,7 +32,7 @@ jobs:
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
     - run: |
-        docker build . -t gitopspocs.azurecr.io/azure-vote-fe:${{ github.sha }} -f ./azure-vote/Dockerfile .
+        docker build -t gitopspocs.azurecr.io/azure-vote-fe:${{ github.sha }} -f ./azure-vote/Dockerfile .
         docker push gitopspocs.azurecr.io/azure-vote-fe:${{ github.sha }} 
     - name: Set AKS context
       id: set-context
