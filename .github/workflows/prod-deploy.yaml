@@ -9,7 +9,6 @@ jobs:
   test:
     permissions:
       id-token: write # Require write permission to Fetch an OIDC token.
-
     runs-on: ubuntu-latest
     steps:
     - name: Azure CLI Login
@@ -24,17 +23,7 @@ jobs:
         azcliversion: latest
         inlineScript: |
           az account list
-          # You can write your Azure CLI inline scripts here.
-    - name: ACR login   
-      uses: azure/docker-login@v2
-      with:
-        login-server: gitopspocs.azurecr.io
-        username: ${{ secrets.REGISTRY_USERNAME }}
-        password: ${{ secrets.REGISTRY_PASSWORD }}
-    - run: |
-          ls -al
-#        docker build -t gitopspocs.azurecr.io/azure-vote-fe:${{ github.sha }} -f ./azure-vote/Dockerfile ./azure-vote
-#        docker push gitopspocs.azurecr.io/azure-vote-fe:${{ github.sha }} 
+          # You can write your Azure CLI inline scripts here. 
     - name: Set AKS context
       id: set-context
       uses: azure/aks-set-context@v3
@@ -46,6 +35,15 @@ jobs:
       uses: azure/setup-kubectl@v3
     - name: Checkout Repository
       uses: actions/checkout@v4
+    - name: ACR login   
+      uses: azure/docker-login@v2
+      with:
+        login-server: gitopspocs.azurecr.io
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+    - run: |
+        docker build -t gitopspocs.azurecr.io/azure-vote-fe:${{ github.sha }} -f ./azure-vote/Dockerfile ./azure-vote
+        docker push gitopspocs.azurecr.io/azure-vote-fe:${{ github.sha }}
     - name: Deploy to AKS
       id: deploy-aks
       uses: Azure/k8s-deploy@v4
